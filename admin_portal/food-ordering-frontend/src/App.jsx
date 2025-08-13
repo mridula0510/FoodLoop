@@ -3,6 +3,7 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
+  Navigate,
   useParams
 } from 'react-router-dom';
 
@@ -18,9 +19,17 @@ import OutletList from './components/OutletList';
 import Menu from './components/outlet/Menu';
 import CategoryItems from './components/outlet/CategoryItems';
 import CollectionPage from './components/outlet/CollectionPage';
+import OrderUpdates from './components/OrderUpdates';
+import Profile from './components/Profile'; // ✅ Import actual Profile component
 
 // Dynamically import all JSX files from OutletMenu folder
 const menuModules = import.meta.glob('./components/OutletMenu/*.jsx');
+
+// ✅ Wrapper for Private Routes
+const PrivateRoute = ({ children }) => {
+  const token = localStorage.getItem("access");
+  return token ? children : <Navigate to="/login" replace />;
+};
 
 // 🔁 Wrapper to dynamically load outlet-specific component
 const DynamicMenu = () => {
@@ -82,6 +91,30 @@ function App() {
             <Layout>
               <CollectionPage />
             </Layout>
+          }
+        />
+
+        {/* 🆕 Protected Orders Page */}
+        <Route
+          path="/orders"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <OrderUpdates />
+              </Layout>
+            </PrivateRoute>
+          }
+        />
+
+        {/* 🆕 Protected Profile Page */}
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <Layout>
+                <Profile />
+              </Layout>
+            </PrivateRoute>
           }
         />
 
